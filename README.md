@@ -21,6 +21,10 @@ A simple database management system using Bash shell scripting it is Document Da
 
 1. Clone the repository or download the Bash script.
 2. Run the script using the command: `bash DBMS.sh`.
+   
+<figure style="border: 2px solid black; padding: 5px;">
+  <img src="images/usage.gif" alt="Your GIF" />
+</figure>
 
 ## Authors
 
