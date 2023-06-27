@@ -20,15 +20,15 @@ function mainMenu {
     2)  createDB ;;
     3)  renameDB ;;
     4)  dropDB ;;
-    5)  ls ./DBMS ; mainMenu;;
+    5)  showDB ; mainMenu;;
     6) exit ;;
     *) echo " Wrong Choice " ; mainMenu;
   esac
 }
 
+#####################
 function selectDB {
-  echo -e "Enter Database Name: \c"
-  read dbName
+  select dbName in $(showDB);do
   cd ./DBMS/$dbName 2>>./.error.log
   if [[ $? == 0 ]]; then
     echo "Database $dbName was Successfully Selected"
@@ -37,8 +37,10 @@ function selectDB {
     echo "Database $dbName wasn't found"
     mainMenu
   fi
+  done
 }
 
+##################
 function createDB {
   echo -e "Enter Database Name: \c"
   read dbName
@@ -78,6 +80,11 @@ function dropDB {
   mainMenu
 }
 
+###############
+function showDB {
+  ls -t ./DBMS
+}
+
 function tablesMenu {
   echo -e "\n+--------Tables Menu------------+"
   echo "| 1. Show Existing Tables       |"
@@ -93,7 +100,7 @@ function tablesMenu {
   echo -e "Enter Choice: \c"
   read ch
   case $ch in
-    1)  ls .; tablesMenu ;;
+    1)  showTable; tablesMenu ;;
     2)  createTable ;;
     3)  insert;;
     4)  clear; selectMenu ;;
@@ -105,6 +112,9 @@ function tablesMenu {
     *) echo " Wrong Choice " ; tablesMenu;
   esac
 
+}
+function showTable {
+  ls -t .
 }
 
 function createTable {
@@ -174,21 +184,22 @@ function createTable {
 }
 
 function dropTable {
-  echo -e "Enter Table Name: \c"
-  read tName
+  echo "Select Table: "
+  select tName in $(showTable);do
   rm $tName .$tName 2>>./.error.log
   if [[ $? == 0 ]]
   then
     echo "Table Dropped Successfully"
   else
     echo "Error Dropping Table $tName"
-  fi
+  fi 
   tablesMenu
+  done
 }
 
 function insert {
-  echo -e "Table Name: \c"
-  read tableName
+  echo "Select Table: "
+  select tableName in $(showTable);do
   if ! [[ -f $tableName ]]; then
     echo "Table $tableName isn't existed ,choose another Table"
     tablesMenu
@@ -240,11 +251,12 @@ function insert {
   fi
   row=""
   tablesMenu
+  done
 }
 
 function updateTable {
-  echo -e "Enter Table Name: \c"
-  read tName
+  echo "Select Table: "
+  select tName in $(showTable);do
   echo -e "Enter Condition Column name: \c"
   read field
   fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tName)
@@ -280,11 +292,12 @@ function updateTable {
       fi
     fi
   fi
+  done
 }
 
 function deleteFromTable {
-  echo -e "Enter Table Name: \c"
-  read tName
+  echo "Select Table: "
+  select tName in $(showTable);do
   echo -e "Enter Condition Column name: \c"
   read field
   fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tName)
@@ -307,6 +320,7 @@ function deleteFromTable {
       tablesMenu
     fi
   fi
+  done
 }
 
 function selectMenu {
@@ -334,23 +348,25 @@ function selectMenu {
 }
 
 function selectAll {
-  echo -e "Enter Table Name: \c"
-  read tName
+  echo "Select Table: "
+  select tName in $(showTable);do
   column -t -s '|' $tName 2>>./.error.log
   if [[ $? != 0 ]]
   then
     echo "Error Displaying Table $tName"
   fi
   selectMenu
+  done
 }
 
 function selectCol {
-  echo -e "Enter Table Name: \c"
-  read tName
+  echo "Select Table: "
+  select tName in $(showTable);do
   echo -e "Enter Column Number: \c"
   read colNum
   awk 'BEGIN{FS="|"}{print $'$colNum'}' $tName
   selectMenu
+  done
 }
 
 function selectCon {
